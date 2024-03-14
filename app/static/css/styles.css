@@ -1,0 +1,37 @@
+.form-container {
+    display: flex;
+    flex-direction: column;
+    width: 50%; 
+    margin: auto; 
+}
+
+.input-row {
+    display: flex;
+    justify-content: space-between;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 48%; 
+    min-width: 200px;
+}
+
+.input-group label {
+    margin-bottom: 5px;
+}
+.submit-row {
+    margin-top: 10px;
+
+}
+.submit-button {
+    /* put in middle of the page*/
+
+    width: 100%;
+    padding: 10px;
+    margin-top: 20px; 
+}
+label {
+    min-width:220px;
+}
+

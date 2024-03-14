@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>Bayesian A/B Testing App</title>
+    
+</head>
+<body>
+    <h1>Bayesian A/B Testing App</h1>
+    <div class="form-container">
+        <form method="post">
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="trialsA">Trials for Version A:</label>
+                    <input type="number" id="trialsA" name="trialsA" placeholder="Enter number of trials" required>
+                </div>
+                <div class="input-group">
+                    <label for="trialsB">Trials for Version B:</label>
+                    <input type="number" id="trialsB" name="trialsB" placeholder="Enter number of trials" required>
+                </div>
+            </div>
+            <div class="input-row">
+                <div class="input-group">
+                    <label for="successesA">Successes for Version A:</label>
+                    <input type="number" id="successesA" name="successesA" placeholder="Enter number of successes" required>
+                </div>
+                <div class="input-group">
+                    <label for="successesB">Successes for Version B:</label>
+                    <input type="number" id="successesB" name="successesB" placeholder="Enter number of successes" required>
+                </div>
+            </div>
+            <div class = "input-row"> 
+                <div class ="input-group"> 
+                    <label for="alphaA">Alpha for Version A (optional):</label>
+                    <input type = "number" id="alphaA" name = "alphaA" placeholder="Enter alpha value"> 
+                </div> 
+                <div class = "input-group">
+                    <label for="alphaB">Alpha for Version B (optional):</label>
+                    <input type = "number" id="alphaB" name = "alphaB" placeholder="Enter alpha value">
+                </div>
+            </div> 
+            <div class = "input-row"> 
+                <div class ="input-group"> 
+                    <label for="betaA">Beta for Version A (optional):</label>
+                    <input type = "number" id="betaA" name = "betaA" placeholder="Enter beta value"> 
+                </div> 
+                <div class = "input-group">
+                    <label for="betaB">Beta for Version B (optional):</label>
+                    <input type = "number" id="betaB" name = "betaB" placeholder="Enter beta value">
+                </div>
+            </div>
+            <div class="submit-row">
+                <input type="submit" value="Analyze">
+            </div>
+        </form>
+    </div>
+    
+</body>
+</html>
