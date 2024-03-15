@@ -15,7 +15,7 @@ def perform_bayesian_analysis(data):
             p_B = pm.Beta('p_B', alpha=data['alphaB'], beta=data['betaB'])
             obs_A = pm.Binomial('obs_A', n=data['trialsA'], p=p_A, observed=data['successesA'])
             obs_B = pm.Binomial('obs_B', n=data['trialsB'], p=p_B, observed=data['successesB'])
-            trace = pm.sample(1000, tune=500, step=pm.Metropolis())
+            trace = pm.sample(10000, tune=500, step=pm.Metropolis())
 
         return {
             'p_A_samples': trace['p_A'].tolist(),
@@ -28,11 +28,18 @@ def perform_bayesian_analysis(data):
 def create_histogram(p_A_samples, p_B_samples):
     try:
         plt.figure()
-        plt.hist(p_A_samples, bins=30, alpha=0.5, label='p_A')
-        plt.hist(p_B_samples, bins=30, alpha=0.5, label='p_B')
+        plt.hist(p_A_samples, bins=30, alpha=0.5, label='p_A', color='red')
+        plt.hist(p_B_samples, bins=30, alpha=0.5, label='p_B', color='blue')
         plt.legend()
         plt.xlabel('Value')
         plt.ylabel('Frequency')
+        #add confidence interval lines
+        plt.axvline(x=np.percentile(p_A_samples, 2.5), color='red', linestyle='--')
+        plt.axvline(x=np.percentile(p_A_samples, 97.5), color='red', linestyle='--')
+        plt.axvline(x=np.percentile(p_B_samples, 2.5), color='blue', linestyle='--')
+        plt.axvline(x=np.percentile(p_B_samples, 97.5), color='blue', linestyle='--')
+        plt.title('Posterior distributions of p_A and p_B')
+        plt.grid(True)
 
         # Ensure the static directory exists
         static_dir = os.path.join(current_app.root_path, 'static')
