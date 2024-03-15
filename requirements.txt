@@ -1,3 +1,4 @@
 Flask
 pymc3
 numpy
+flask-session

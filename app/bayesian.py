@@ -1,30 +1,53 @@
 import pymc3 as pm
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+import os
+
+import io
+from flask import current_app
 
 def perform_bayesian_analysis(data):
-    with pm.Model() as model:
-        # Using data provided in the dictionary
-        p_A = pm.Beta('p_A', alpha=data['alphaA'], beta=data['betaA'])
-        p_B = pm.Beta('p_B', alpha=data['alphaB'], beta=data['betaB'])
+    try:
+        with pm.Model() as model:
+            p_A = pm.Beta('p_A', alpha=data['alphaA'], beta=data['betaA'])
+            p_B = pm.Beta('p_B', alpha=data['alphaB'], beta=data['betaB'])
+            obs_A = pm.Binomial('obs_A', n=data['trialsA'], p=p_A, observed=data['successesA'])
+            obs_B = pm.Binomial('obs_B', n=data['trialsB'], p=p_B, observed=data['successesB'])
+            trace = pm.sample(1000, tune=500, step=pm.Metropolis())
 
-        delta = pm.Deterministic('delta', p_A - p_B)
+        return {
+            'p_A_samples': trace['p_A'].tolist(),
+            'p_B_samples': trace['p_B'].tolist(),
+        }
+    except Exception as e:
+        current_app.logger.error(f"Error in Bayesian analysis: {e}")
+        return None
 
-        obs_A = pm.Binomial('obs_A', n=data['trialsA'], p=p_A, observed=data['successesA'])
-        obs_B = pm.Binomial('obs_B', n=data['trialsB'], p=p_B, observed=data['successesB'])
+def create_histogram(p_A_samples, p_B_samples):
+    try:
+        plt.figure()
+        plt.hist(p_A_samples, bins=30, alpha=0.5, label='p_A')
+        plt.hist(p_B_samples, bins=30, alpha=0.5, label='p_B')
+        plt.legend()
+        plt.xlabel('Value')
+        plt.ylabel('Frequency')
 
-        trace = pm.sample(1000, tune=500, step=pm.Metropolis(), return_inferencedata=False, progressbar=True)
+        # Ensure the static directory exists
+        static_dir = os.path.join(current_app.root_path, 'static')
+        if not os.path.exists(static_dir):
+            os.makedirs(static_dir)
 
-    p_A_samples = trace['p_A']
-    p_B_samples = trace['p_B']
-    delta_samples = trace['delta']
+        # Path for the plot
+        plot_path = os.path.join(static_dir, 'histogram.png')
 
-    cred_interval = np.percentile(delta_samples, [2.5, 97.5])
-    prob = np.mean(delta_samples > 0)
+        # Save the figure
+        plt.savefig(plot_path)
+        plt.close()
 
-    return {
-        #'p_A_samples': p_A_samples.tolist(),
-        #'p_B_samples': p_B_samples.tolist(),
-        #'delta_samples': delta_samples.tolist(),
-        'cred_interval': cred_interval.tolist(),
-        'prob': prob
-    }
+        # Return the relative path to the saved image
+        return 'histogram.png'
+    except Exception as e:
+        current_app.logger.error(f"Error creating histogram: {e}")
+        return None
