@@ -2,13 +2,14 @@ from flask import render_template, request, redirect, url_for, session, flash
 from . import app
 from .bayesian import perform_bayesian_analysis, create_histogram
 
-def safe_convert_to_int(value):
+def safe_convert_to_int(value, default=10000):
     try:
-        # Convert to integer, ensuring float strings are handled correctly
+        
+        if not value:
+            return default
         return int(float(value))
     except (ValueError, TypeError):
-        # If the conversion fails, raise an error
-        raise ValueError("Invalid input: Expected an integer or a float that can be converted to an integer.")
+        return default
 
 def safe_convert_to_float(value, default=1.0):
     try:
@@ -30,7 +31,9 @@ def home():
                 'trialsB': safe_convert_to_int(request.form.get('trialsB')),
                 'successesB': safe_convert_to_int(request.form.get('successesB')),
                 'alphaB': safe_convert_to_float(request.form.get('alphaB')),
-                'betaB': safe_convert_to_float(request.form.get('betaB'))
+                'betaB': safe_convert_to_float(request.form.get('betaB')),
+                'numDraws': safe_convert_to_int(request.form.get('numDraws', '10000')),
+                'numTuningSteps': safe_convert_to_int(request.form.get('numTuningSteps', '500'))
             }
 
             results = perform_bayesian_analysis(data)
@@ -40,6 +43,7 @@ def home():
 
             plot_path = create_histogram(results['p_A_samples'], results['p_B_samples'])
             session['plot_path'] = plot_path
+            session['prob_B_better_than_A'] = results['prob_B_better_than_A']
 
         except Exception as e:
             flash(str(e), 'error')
@@ -52,8 +56,9 @@ def home():
 @app.route('/results')
 def results():
     plot_path = session.get('plot_path')
+    prob_B_better_than_A = session.get('prob_B_better_A')
     if not plot_path:
         flash('No plot to display. Please try submitting the form again.', 'error')
         return redirect(url_for('home'))
 
-    return render_template('results.html', plot_path=plot_path)
+    return render_template('results.html', plot_path=plot_path, prob_B_better_than_A=prob_B_better_than_A)

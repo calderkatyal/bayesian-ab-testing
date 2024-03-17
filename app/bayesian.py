@@ -4,8 +4,6 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import os
-
-import io
 from flask import current_app
 
 def perform_bayesian_analysis(data):
@@ -15,12 +13,21 @@ def perform_bayesian_analysis(data):
             p_B = pm.Beta('p_B', alpha=data['alphaB'], beta=data['betaB'])
             obs_A = pm.Binomial('obs_A', n=data['trialsA'], p=p_A, observed=data['successesA'])
             obs_B = pm.Binomial('obs_B', n=data['trialsB'], p=p_B, observed=data['successesB'])
-            trace = pm.sample(10000, tune=500, step=pm.Metropolis())
-
+            numDraws = data['numDraws']
+            numTuningSteps = data['numTuningSteps']
+            trace = pm.sample(numDraws, tune=numTuningSteps, step=pm.Metropolis())
+            
+        p_A_samples = trace['p_A']
+        p_B_samples = trace['p_B']
+        prob_B_better_than_A = np.mean(p_B_samples > p_A_samples)
+        
         return {
             'p_A_samples': trace['p_A'].tolist(),
             'p_B_samples': trace['p_B'].tolist(),
+            'prob_B_better_than_A': prob_B_better_than_A
+            
         }
+        
     except Exception as e:
         current_app.logger.error(f"Error in Bayesian analysis: {e}")
         return None
@@ -40,7 +47,7 @@ def create_histogram(p_A_samples, p_B_samples):
         plt.axvline(x=np.percentile(p_B_samples, 97.5), color='blue', linestyle='--')
         plt.title('Posterior distributions of p_A and p_B')
         plt.grid(True)
-
+        
         # Ensure the static directory exists
         static_dir = os.path.join(current_app.root_path, 'static')
         if not os.path.exists(static_dir):

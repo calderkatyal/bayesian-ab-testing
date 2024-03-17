@@ -14,8 +14,10 @@
         <p>Error: No histogram to display.</p>
     {% endif %}
     <br> </br> 
+    <p>Posterior probability that B is better than A: {{ prob_B_better_than_A }}</p>
     <form action = "{{ url_for('home') }}"> 
         <input type="submit" value="Back to Home">
     </form>
+    
 </body>
 </html>

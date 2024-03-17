@@ -9,9 +9,14 @@
     
 </head>
 <body>
-    <h1>Bayesian A/B Testing App</h1>
+    <div class="header">
+        <h1>Bayesian A/B Testing App</h1>
+        <div class="loader-container" style="display:none;">
+            <div class="loader"></div>
+        </div> 
+    </div> 
     <div class="form-container">
-        <form method="post">
+        <form id = "myForm" method="post">
             <div class="input-row">
                 <div class="input-group">
                     <label for="trialsA">Trials for Version A:</label>
@@ -50,6 +55,16 @@
                 <div class = "input-group">
                     <label for="betaB">Beta for Version B (optional):</label>
                     <input type = "number" id="betaB" name = "betaB" placeholder="Enter beta value">
+                </div>
+            </div>
+            <div class="input-row"> 
+                <div class="input-group">
+                    <label for="numDraws">Number of draws (optional):</label>
+                    <input type="number" id="numDraws" name="numDraws" placeholder="Enter number of draws">
+                </div>
+                <div class="input-group">
+                    <label for="numTuningSteps">Number of tuning steps (optional):</label>
+                    <input type="number" id="numTuningSteps" name="numTuningSteps" placeholder="Enter number of tuning steps">
                 </div>
             </div>
             <div class="submit-row">

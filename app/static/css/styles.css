@@ -1,3 +1,21 @@
+.header {
+    display:flex; 
+    background-color: rgb(33,41,54);
+    overflow: auto; 
+    color:white; 
+    justify-content:center; 
+    font: 20px Courier, sans-serif, Arial;
+    margin-bottom:20px;
+    min-width: 700px;
+}
+
+.loader-container {
+    display:flex; 
+    align-items: center;
+    justify-content: right;;
+    margin-left:75px;
+}
+
 .form-container {
     display: flex;
     flex-direction: column;
@@ -14,7 +32,7 @@
     display: flex;
     flex-direction: column;
     flex-basis: 48%; 
-    min-width: 200px;
+    min-width: 220px;
 }
 
 .input-group label {
@@ -32,6 +50,29 @@
     margin-top: 20px; 
 }
 label {
-    min-width:220px;
+    min-width:240px;
 }
+
+.loader {
+    border: 10px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 10px solid #3498db;
+    width: 20px;
+    height: 20px;
+    -webkit-animation: spin 2s linear infinite; /* Safari */
+    animation: spin 2s linear infinite;
+  }
+.loader-container {
+    display: flex;
+    justify-content: right;
+}
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 
